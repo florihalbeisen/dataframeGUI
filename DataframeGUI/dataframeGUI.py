@@ -241,16 +241,39 @@ class MainFrame(wx.Frame):
 
     def OnOpen(self,e):
         """ Open a file"""
-        dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "*.*", wx.FD_OPEN)
-        if dlg.ShowModal() == wx.ID_OK:
-            self.filename = dlg.GetFilename()
-            self.dirname = dlg.GetDirectory()
-            f = open(os.path.join(self.dirname, self.filename), 'r')
-            self.control.SetValue(f.read())
-            f.close()
-        dlg.Destroy()
+#        dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "*.*", wx.FD_OPEN)
+#        if dlg.ShowModal() == wx.ID_OK:
+#            self.filename = dlg.GetFilename()
+#            self.dirname = dlg.GetDirectory()
+#            f = open(os.path.join(self.dirname, self.filename), 'r')
+#            self.control.SetValue(f.read())
+#            f.close()
+#        dlg.Destroy()
+        with wx.FileDialog(self, "Open XYZ file", wildcard="CSV files (*.csv)|*.csv",
+                       style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
 
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return     # the user changed their mind
+    
+            # Proceed loading the file chosen by the user
+            pathname = fileDialog.GetPath()
+            try:
+                with open(pathname, 'r') as file:
+                    data = pd.read_csv(file, sep=",")
+#                    data = pd.read_csv('breeding_sucess_short.csv', sep=",")
+                    df = pd.DataFrame(data)
 
+            except IOError:
+                wx.LogError("Cannot open file '%s'." % newfile)
+        
+        
+#            data_f = pd.read_csv(file, sep=",")
+                
+           
+
+#        dfd = pd.DataFrame(data_frame)
+#        print(dfd.columns)
+            
 
 
 
